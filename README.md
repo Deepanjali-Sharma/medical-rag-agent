@@ -1,142 +1,62 @@
-# 🚀 **Local RAG Researcher with DeepSeek R1 & Langgraph**
+# **Agentic Medical AI Assistant (Multi-Step RAG + LangGraph)**
 
-### 👉 **[Learn How to Build a Local RAG Researcher – Step-by-Step Guide Inside!](https://dev.to/kaymen99/build-your-own-local-rag-researcher-with-deepseek-r1-11m) 🚀**
+An agentic AI system that performs multi-step medical reasoning using RAG (Retrieval-Augmented Generation), query decomposition, and adaptive search.
 
-I built a **local adaptive RAG research agent** using **LangGraph** and a local **DeepSeek R1 model** running on **Ollama**. This agent act like a deep researcher, designed to gather, analyze, and summarize information based on user instructions.  
-
-<div align="center">
-  <img src="https://github.com/user-attachments/assets/5dc34341-3a2f-461c-b66d-46b134fe5bd9" alt="Demo of Local RAG Researcher with LangGraph & DeepSeek">
-</div>
-
-## **How It Works** 
-
-1. **Generating Research Queries** – The agent takes user input and formulates relevant research questions to find the most useful information.  
-
-2. **Retrieving Documents** – It searches a local **Chroma database** to pull relevant documents related to the query.  
-
-3. **Evaluating Relevance** – Each document is checked against the original query to ensure it contains meaningful and accurate information.  
-
-4. **Expanding Search if Needed** – If the retrieved documents are not sufficient or relevant, the agent can **search the web** for additional sources.  
-
-5. **Summarizing Findings** – After gathering all necessary information, the agent processes the data and extracts key insights.  
-
-6. **Final Report Generation** – The summarized findings are sent to a **writer agent**, which structures the information into a **detailed and well-formatted report** based on a predefined format.  
-
-This system allows for an **efficient and adaptive research process**, ensuring high-quality and relevant outputs while minimizing unnecessary or low-value data.
-
-## **Key Features**  
-
-- **Dynamic Search Through Local Documents** – Efficiently retrieves relevant information from your internal documents.  
-- **Advanced Insight Extraction** – Leverages the reasoning power of **DeepSeek R1** model to evaluate, analyze, and extract the most valuable insights from documents.  
-- **Real-Time Web Search** – Expands research by accessing online sources using **[Tavily API](https://tavily.com/)** when local documents are insufficient.  
-- **Structured Report Generation** – Produces well-formatted reports based on your predefined reporting templates.
-
-## System Flowchart
-
-This is the detailed flow of the system:
-
-<div align="center">
-  <img src="https://github.com/user-attachments/assets/5e06e948-c853-47d1-b25e-e3c5ca96b60d" alt="Langgraph Local Deepseek RAG researcher">
-</div>
+Built using LangGraph, local LLMs (Ollama), and vector search, this system simulates how a doctor gathers, validates, and synthesizes information before giving an answer.
 
 
-## Tech Stack
-- **[Ollama](https://ollama.com/)**: Runs the DeepSeek R1 model locally.
-- **[LangGraph](https://www.langchain.com/langgraph)**: Builds AI agents and defines the researcher's workflow.
-- **[ChromaDB](https://docs.trychroma.com/)**: Local vector database for RAG-based retrieval.
-- **[Streamlit](https://docs.streamlit.io/)**: Provides a UI for interacting with the researcher.
-- **[Tavily](https://tavily.com/)**: For searching the web.
+## **Key Idea** 
+Unlike traditional RAG systems (single query → single answer), this project:
+1. Breaks a medical query into multiple sub-queries
 
-## How to Run
-### Prerequisites
-Ensure you have the following installed:
-- Python 3.9+
-- Ollama
-- Tavily API key for web searchs
-- Necessary Python libraries (listed in `requirements.txt`)
+2. Performs iterative retrieval and validation
 
-### Setup
-#### Clone the Repository
-```bash
-git clone https://github.com/kaymen99/local-rag-researcher-deepseek
-cd local-rag-researcher-deepseek
-```
+3. Synthesizes a final grounded response
 
-#### Create and Activate a Virtual Environment
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-```
+## **Why This Project?**
 
-#### Install Required Packages
-```bash
-pip install -r requirements.txt
-```
+Example: "I have abdominal pain and vomiting"
+A simple RAG system:-  Retrieves shallow information.
 
-#### Set Up Environment Variables
-Create a `.env` file in the root directory and add necessary credentials:
+This system:
+            Decomposes → researches → validates → synthesizes
 
-```ini
-# Tavily API key for SearchTool (optional)
-TAVILY_API_KEY="your-api-key"
-```
+## **System Architecture (Agentic Workflow)**
+## Multi-Step Reasoning Pipeline
+1. Query Decomposition Agent
+  - Breaks user query into multiple research queries
+2. Research Subgraph (Core Agent Loop)
+  - Retrieve documents (ChromaDB)
+  - Evaluate relevance (LLM-based filtering)
+  - Fallback to web search if needed
+3. Summarization Agent
+  - Generates structured summaries per query
+4. Final Synthesis
+  - Combines all summaries into a coherent medical response
 
-## Running the Application
-### Step 1: Install and Run Ollama
+## **Tech Stack**
+- LangGraph – Agent orchestration
+- Ollama (phi3 / DeepSeek) – Local LLM inference
+- ChromaDB – Vector database
+- Streamlit – UI
+- Python – Backend
 
-Follow the official instructions to [install Ollama](https://ollama.com/download), then pull the DeepSeek R1 model (this project uses the 7b model but you can choose any other [models available](https://ollama.com/library/deepseek-r1)):
+## **How to Run**
+1. Clone repo
+    git clone https://github.com/Deepanjali-Sharma/medical-rag-agent
+    cd agentic-medical-assistant
 
-```bash
-ollama pull deepseek-r1:7b
-```
+2. Setup environment
+    python -m venv venv
+    venv\Scripts\activate
+    pip install -r requirements.txt
 
-### Step 2: Launch the Streamlit App
+3. Add environment variables
+  Create .env:
+      TAVILY_API_KEY=your_key_here
 
-Run the following command to start the UI:
+4. Run Ollama
+    ollama run phi3
 
-```bash
-streamlit run app.py
-```
-
-### Step 3: Visualize in LangGraph Studio (Optional)
-
-Since the researcher is built with LangGraph, you can use **LangGraph Studio** to inspect the agent's workflow. To do this, run the following commands:  
-
-```bash
-pip install -U "langgraph-cli[inmem]"
-langgraph dev
-```
-
-## Customization
-### Modify Report Structures
-- Add custom structures inside the `report_structures` folder.
-- Select the preferred structure in the UI.
-
-### Using an External LLM Provider  
-
-By default, the researcher runs locally using the **DeepSeek R1 model** on **Ollama**. However, if you prefer to use a cloud-based LLM provider instead (such as **Cloud DeepSeek R1**, **OpenAI GPT-4o**, or **OpenAI o1**), follow these steps:  
-
-1. **Modify the Code**:  
-   - Go to `assistant/graph.py`.  
-   - Comment the code invoking Ollama model.  
-   - Uncomment the section of code that enables external LLM calls.  
-   - `invoke_llm` uses **[OpenRouter](https://openrouter.ai)**, which provides access to multiple LLMs. You can choose your preferred model from their [list](https://openrouter.ai/models). 🚀  
-   - You can also modify the `invoke_llm` function to use a single LLM provider instead of **OpenRouter** if you want.  
-
-2. **Set Up API Keys**:  
-   - Obtain OpenRouter API key from [here](https://openrouter.ai/settings/keys).  
-   - Add these keys to your `.env` file in the following format:  
-
-     ```env
-     OPENROUTER_API_KEY=your_openai_key
-     ```
-
-## **📚 Further Reading & Resources**
-
-* Langchain: Building a fully local "deep researcher" with DeepSeek-R1[see](https://www.youtube.com/watch?v=sGUjmyfof4Q) 
-
-* Langchain: Building a fully local research assistant from scratch with Ollama [see](https://www.youtube.com/watch?v=XGuTzHoqlj8) 
-
-* LangGraph Template: Multi-Agent RAG Research [see](https://www.youtube.com/watch?v=JLDLANs_m_w) 
-
-* LangGraph Adaptative RAG implementation [see](https://github.com/langchain-ai/langgraph/blob/main/examples/rag/langgraph_adaptive_rag_local.ipynb)
+5. Run app
+    streamlit run app.py
